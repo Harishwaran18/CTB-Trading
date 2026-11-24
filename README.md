@@ -247,18 +247,7 @@ replace it in `.env`.
 
 ---
 
-## Tamil summary (sirukkam)
 
-- **90% accuracy kudukka mudiyathu.** Athu yaarum sollum bot ellamey ungal
-  panam pohum. Ithu unmaiyana numbers tharum: 50–58% hit rate, athu positive
-  expectancy irunthaa real edge.
-- Bot ippothu **crypto, forex, stocks** ellame work aagum, live data tharum.
-- `python main.py backtest --symbol ...` odi **unmaiyana accuracy** parunga,
-  appuram thaan trade pannunga.
-- `.env` la ungal token/key maathunga; **old keys ah rotate pannunga**.
-- `python main.py run` → live bot. `python main.py stats` → unmaiyana win rate.
-
----
 
 ## Disclaimer
 
