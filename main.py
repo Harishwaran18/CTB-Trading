@@ -194,6 +194,13 @@ def cmd_test_telegram(args: argparse.Namespace) -> int:
         return 1
 
 
+def cmd_portal(args: argparse.Namespace) -> int:
+    from portal import serve
+
+    serve(args.host, args.port, reload=args.reload)
+    return 0
+
+
 # --------------------------------------------------------------------------- #
 # Parser
 # --------------------------------------------------------------------------- #
@@ -255,6 +262,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     tg_p = sub.add_parser("test-telegram", help="verify Telegram connectivity")
     tg_p.set_defaults(func=cmd_test_telegram)
+
+    portal_p = sub.add_parser("portal", help="start the web dashboard")
+    portal_p.add_argument("--host", default="0.0.0.0")
+    portal_p.add_argument("--port", type=int, default=12000)
+    portal_p.add_argument("--reload", action="store_true")
+    portal_p.set_defaults(func=cmd_portal)
     return parser
 
 

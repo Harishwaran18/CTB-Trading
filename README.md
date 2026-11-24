@@ -78,7 +78,9 @@ risk.py              ATR stop/target and position sizing
 backtest.py          walk-forward backtester and confidence sweep
 storage.py           SQLite state: signals, dedup, trades, performance
 telegram_sender.py   Telegram delivery and message formatting
-tests/              73 unit/integration tests (no network required)
+portal.py            FastAPI web portal + JSON API
+static/              dashboard (HTML/CSS/JS, no external CDN)
+tests/              84 unit/integration tests (no network required)
 ```
 
 ---
@@ -128,7 +130,32 @@ python main.py backtest --symbol AAPL --interval 15m --strategy reversion
 
 python main.py stats                     # live paper-trade win rate
 python main.py symbols                   # list known instruments
+python main.py portal --port 12000       # web dashboard
 ```
+
+### Web portal
+
+```bash
+python main.py portal --host 0.0.0.0 --port 12000
+# or: uvicorn portal:app --host 0.0.0.0 --port 12000
+```
+
+Open `http://localhost:12000` (or your public host URL). The dashboard is
+served by the same engine as the bot:
+
+- live market cards with confidence ring, direction, entry/stop/target and reasons
+- click any card for a candlestick chart + full indicator snapshot
+- recent signals table fed from `ctb_state.db`
+- backtest lab: run any symbol/timeframe/strategy and see win rate, avg R,
+  profit factor, directional hit rate and confidence buckets
+- auto-refresh every 10s
+
+Endpoints: `/api/health`, `/api/scan`, `/api/market/{symbol}`, `/api/performance`,
+`/api/backtest`, `/api/symbols`. Run the bot (`python main.py run`) alongside the
+portal so the signals table and performance stats keep filling in.
+
+> The portal is read-only and exposes no credentials, but it has no login. Bind
+> it to `127.0.0.1` unless you are behind a trusted network or proxy.
 
 ### Reading the backtest
 

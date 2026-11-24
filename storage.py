@@ -171,7 +171,10 @@ class StateStore:
             "SELECT COUNT(*) AS trades, "
             "SUM(CASE WHEN outcome='win' THEN 1 ELSE 0 END) AS wins, "
             "SUM(CASE WHEN outcome='loss' THEN 1 ELSE 0 END) AS losses, "
-            "AVG(r_multiple) AS avg_r, SUM(pnl) AS pnl "
+            "AVG(r_multiple) AS avg_r, SUM(pnl) AS pnl, "
+            "SUM(CASE WHEN r_multiple > 0 THEN r_multiple ELSE 0 END) AS gross_win, "
+            "SUM(CASE WHEN r_multiple < 0 THEN -r_multiple ELSE 0 END) AS gross_loss, "
+            "SUM(r_multiple) AS total_r "
             "FROM trades"
         )
         params: tuple = ()
@@ -182,11 +185,15 @@ class StateStore:
             row = self._conn.execute(query, params).fetchone()
         trades = row["trades"] or 0
         wins = row["wins"] or 0
+        gross_win = row["gross_win"] or 0.0
+        gross_loss = row["gross_loss"] or 0.0
         return {
             "trades": trades,
             "wins": wins,
             "losses": row["losses"] or 0,
             "win_rate": round(100.0 * wins / trades, 1) if trades else 0.0,
             "avg_r": round(row["avg_r"] or 0.0, 3),
+            "total_r": round(row["total_r"] or 0.0, 2),
             "pnl": round(row["pnl"] or 0.0, 2),
+            "profit_factor": round(gross_win / gross_loss, 2) if gross_loss > 0 else None,
         }
